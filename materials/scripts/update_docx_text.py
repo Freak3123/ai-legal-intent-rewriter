@@ -15,7 +15,7 @@ from docx.text.paragraph import Paragraph
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 MATERIALS = Path(__file__).resolve().parent.parent
-PATH = MATERIALS / "deliverables" / "research_paper_final.docx"
+PATH = MATERIALS / "deliverables" / "Final_Project_Report" / "research_paper_final.docx"
 
 # Ordered: longest patterns first so we don't break later substring matches.
 REPLACEMENTS: list[tuple[str, str]] = [

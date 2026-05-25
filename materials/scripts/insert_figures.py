@@ -13,7 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 MATERIALS = Path(__file__).resolve().parent.parent
 FIGURES_DIR = MATERIALS / 'figures'
-SRC = str(MATERIALS / 'deliverables' / 'research_paper_final.docx')
+SRC = str(MATERIALS / 'deliverables' / 'Final_Project_Report' / 'research_paper_final.docx')
 DST = SRC
 
 # (image, caption, anchor_heading_text, width_inches)
