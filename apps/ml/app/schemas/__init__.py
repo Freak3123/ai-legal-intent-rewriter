@@ -1,0 +1,48 @@
+"""Pydantic request/response schemas. Source of truth: docs/api-contract.md."""
+
+from app.schemas.request import AnalyzeOptions, AnalyzeRequest
+from app.schemas.response import (
+    AnalyzeResponse,
+    CharSpan,
+    Classification,
+    ClassificationLabel,
+    Clause,
+    Entity,
+    EntityType,
+    ErrorBody,
+    ErrorResponse,
+    HealthResponse,
+    IngestionMethod,
+    Metrics,
+    ModelVersionsInfo,
+    Rewrite,
+    RewriteMethod,
+    Risk,
+    RiskLevel,
+    TimingMs,
+    TopK,
+)
+
+__all__ = [
+    "AnalyzeOptions",
+    "AnalyzeRequest",
+    "AnalyzeResponse",
+    "CharSpan",
+    "Classification",
+    "ClassificationLabel",
+    "Clause",
+    "Entity",
+    "EntityType",
+    "ErrorBody",
+    "ErrorResponse",
+    "HealthResponse",
+    "IngestionMethod",
+    "Metrics",
+    "ModelVersionsInfo",
+    "Rewrite",
+    "RewriteMethod",
+    "Risk",
+    "RiskLevel",
+    "TimingMs",
+    "TopK",
+]

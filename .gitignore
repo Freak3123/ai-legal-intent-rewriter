@@ -1,0 +1,119 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.python-version
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Data (don't commit large datasets)
+data/raw/
+data/processed/
+data/annotations/
+!data/samples/
+*.csv
+*.tsv
+*.parquet
+*.arrow
+!data/samples/*.csv
+# Keep the curated seed CSV (small, committed to the repo so train_classifier.py works)
+!apps/ml/data/clauses_seed.csv
+# Don't commit the downloaded CUAD cache
+apps/ml/data/.cuad_cache/
+
+# Model artefacts
+*.bin
+*.pt
+*.pth
+*.safetensors
+*.onnx
+.cache/
+.huggingface/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Vercel
+.vercel/
+
+# Hugging Face Spaces local cache
+.gradio/
+flagged/
+
+# Local Claude Code overrides (per-developer)
+CLAUDE.local.md
+.claude/local/
+
+# Coverage
+coverage/
+.coverage
+htmlcov/
+
+#references
+docs/
+
+#ai 
+.claude/
+
+# LaTeX compile artefacts (anywhere in the repo, but mostly in materials/)
+*.aux
+*.lof
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.snm
+*.nav
+*.vrb
+
+# Office lock / temp files (created while a doc is open in Word/PowerPoint/Excel)
+~$*.docx
+~$*.pptx
+~$*.xlsx
+
+# Throwaway / inspection artefacts in materials/
+materials/archive/
+materials/backups/
+materials/templates/
+materials/**/__pycache__/
+project_team_guide.*
+

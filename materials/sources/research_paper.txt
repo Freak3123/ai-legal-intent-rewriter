@@ -1,0 +1,519 @@
+[P0] AI LEGAL INTENT REWRITER:
+[P1] A MULTI-STAGE NATURAL LANGUAGE PROCESSING PIPELINE FOR
+[P2] PLAIN-LANGUAGE INTERPRETATION AND RISK FLAGGING OF LEGAL DOCUMENTS
+[P3] A Project Report
+[P4] Submitted by
+[P5] Ashreeta Patra  (Reg. No: 2241016258)
+[P6] Shnehal Mishra  (Reg. No: 2241013172)
+[P7] Pratyush Mohanty  (Reg. No: 2241013262)
+[P8] Swagat Sourav Mallick  (Reg. No: 2241013083)
+[P9] in partial fulfilment for the award of the degree of
+[P10] BACHELOR OF TECHNOLOGY
+[P11] IN
+[P12] COMPUTER SCIENCE & ENGINEERING
+[P13] (Specialization in Artificial Intelligence and Machine Learning)
+[P15] Centre for Artificial Intelligence and Machine Learning
+[P16] Department of Computer Science and Engineering
+[P17] Faculty of Engineering and Technology, Institute of Technical Education and Research
+[P18] Siksha 'O' Anusandhan (Deemed to be University)
+[P19] Bhubaneswar, Odisha, India
+[P20] June, 2026
+[P22] CERTIFICATE
+[P24] This is to certify that the project report titled “AI Legal Intent Rewriter: A Multi-Stage Natural Language Processing Pipeline for Plain-Language Interpretation and Risk Flagging of Legal Documents” being submitted by Ashreeta Patra, Shnehal Mishra, Pratyush Mohanty and Swagat Sourav Mallick of Section – XX to the Institute of Technical Education and Research, Siksha 'O' Anusandhan (Deemed to be University), Bhubaneswar, for the partial fulfilment for the degree of Bachelor of Technology in Computer Science and Engineering (Specialization in Artificial Intelligence and Machine Learning), is a record of original bona fide work carried out by them under our supervision and guidance. The project work, in our opinion, has reached the requisite standard fulfilling the requirements for the Degree of Bachelor of Technology.
+[P25] The results contained in this project work have not been submitted in part or full to any other University or Institute for the award of any degree or diploma.
+[P26] AUTHOR'S NOTE (flagged per brief): The supervisor's name, designation and the team's section identifier are not present in any supplied source document (the project proposal leaves 'Assigned Supervisor' blank). Placeholders are retained for the team to complete before submission.
+[P27] __________________________
+[P28] NAME OF SUPERVISOR
+[P29] Designation
+[P30] Centre for Artificial Intelligence and Machine Learning
+[P31] Department of Computer Science & Engineering
+[P32] Faculty of Engineering & Technology, Institute of Technical Education and Research
+[P33] Siksha 'O' Anusandhan (Deemed to be University), Bhubaneswar
+[P35] ACKNOWLEDGEMENT
+[P36] We wish to express our sincere gratitude to our project supervisor and to the Project Coordinators, Dr. Rangaballav Pradhan and Mr. Gyana Ranjan Patra, of the Centre for Artificial Intelligence and Machine Learning, for their continued guidance, encouragement and constructive feedback throughout this work. We are grateful to the Department of Computer Science and Engineering, Faculty of Engineering and Technology, Institute of Technical Education and Research, Siksha 'O' Anusandhan (Deemed to be University), for providing the academic environment and resources that made this project possible.
+[P37] We also acknowledge the open-source and research communities whose freely available datasets, pre-trained models and software libraries — most notably the Atticus Project's CUAD corpus, the Hugging Face ecosystem, spaCy and scikit-learn — form the technical foundation of this project. Finally, we thank our families and peers for their support.
+[P39] Date: ____________________                Place: ____________________
+[P41] DECLARATION
+[P42] We declare that this written submission represents our ideas in our own words and where others' ideas or words have been included, we have adequately cited and referenced the original sources. We also declare that we have adhered to all principles of academic honesty and integrity and have not misrepresented or fabricated or falsified any idea/fact/source in our submission. We understand that any violation of the above will be cause for disciplinary action by the University and can also evoke penal action from the sources which have not been properly cited or from whom proper permission has not been taken when needed.
+[P44] Date: ____________________                Place: ____________________
+[P46] REPORT APPROVAL
+[P47] This project report titled “AI Legal Intent Rewriter: A Multi-Stage Natural Language Processing Pipeline for Plain-Language Interpretation and Risk Flagging of Legal Documents” submitted by Ashreeta Patra, Shnehal Mishra, Pratyush Mohanty and Swagat Sourav Mallick is approved for the degree of Bachelor of Technology in Computer Science and Engineering (Specialization in Artificial Intelligence and Machine Learning).
+[P48] Examiner(s):
+[P49] __________________________
+[P50] __________________________
+[P51] __________________________
+[P52] Supervisor:
+[P53] __________________________
+[P54] Project Coordinator(s)                                   Chief Coordinator, CAIML
+[P56] PREFACE
+[P57] Preface / Abstract
+[P58] Legal documents — tenancy agreements, employment contracts, software terms of service and insurance policies — are routinely written in dense, archaic language that is inaccessible to non-experts. The overwhelming majority of people therefore agree to binding terms they have never genuinely understood, which undermines the principle of informed consent. This project, the AI Legal Intent Rewriter, addresses that barrier with a multi-stage Natural Language Processing (NLP) pipeline that ingests a legal document, segments it into individual clauses, classifies each clause by legal intent, extracts key named entities, generates a plain-language rewrite, and flags clauses that carry elevated risk. Results are surfaced through a clause-by-clause web dashboard.
+[P59] The system is built as a two-service architecture: a Next.js web application that owns the user interface, authentication, persistence and orchestration, and a Python FastAPI service that owns all NLP inference. The segmentation, classification, named-entity-recognition, intent-rewriting and risk-flagging modules are fully implemented. The clause classifier is a fine-tuned nlpaueb/legal-bert-base-uncased model trained on the CUAD contract corpus merged with a 227-example hand-curated seed set, mapped onto a purpose-built twelve-category taxonomy. On a held-out stratified test set of 419 clauses it achieves 0.912 overall accuracy, a weighted-average F1-score of 0.915, and a macro-average F1-score of 0.902, with every category scoring at least 0.735 — exceeding the project's macro-F1 target of 0.80. The rewriter is a fine-tuned google/flan-t5-small sequence-to-sequence model trained on the Plain English Contracts corpus, attaining a final validation ROUGE-L of 0.352. The complete pipeline runs end-to-end and is verified by an automated test suite of 34 passing tests. This report documents the problem, the supporting literature, the system design, the implementation, the measured results, and the ethical and sustainability considerations of the work.
+[P60] Keywords: Legal NLP; Natural Language Processing; clause classification; text simplification; named entity recognition; contract analysis; risk flagging; CUAD; Legal-BERT; FLAN-T5; transformer models; plain-language; access to justice.
+[P62] TABLE OF CONTENTS
+[P63] CHAPTER 1 INTRODUCTION	1
+[P64] 1.1 Introduction	1
+[P65] 1.2 Project Overview / Problem Statement	1
+[P66] 1.3 Motivations and Objectives	2
+[P67] 1.4 Scope and Significance of the Work	3
+[P68] 1.5 Organisation of the Report	4
+[P69] CHAPTER 2 REVIEW OF LITERATURE	5
+[P70] 2.1 Review of Existing Systems / Related Work	5
+[P71] 2.1.1 Surveys and Overviews of Legal NLP	5
+[P72] 2.1.2 Foundation Models and Pre-trained Language Models	5
+[P73] 2.1.3 Clause Classification and Contract Understanding	6
+[P74] 2.1.4 Legal Text Simplification and Rewriting	6
+[P75] 2.1.5 Unfair and Risky Clause Detection	6
+[P76] 2.1.6 NLP Tools, Frameworks and Evaluation Metrics	7
+[P77] 2.1.7 Additional Legal Datasets	7
+[P78] 2.2 Research Gaps and Problem Identification	7
+[P79] CHAPTER 3 MATERIALS AND METHODS	9
+[P80] 3.1 Dataset Description / Input Specification	9
+[P81] 3.1.1 Runtime Input Specification	9
+[P82] 3.1.2 Training Dataset — CUAD	9
+[P83] 3.1.3 The Twelve-Category Taxonomy and the 41→12 Mapping	9
+[P84] 3.1.4 Seed Dataset	10
+[P85] 3.2 System Architecture	10
+[P86] 3.3 Methodology / Algorithm / Model Description	12
+[P87] 3.3.1 Document Ingestion	12
+[P88] 3.3.2 Clause Segmentation	12
+[P89] 3.3.3 Clause Classification	12
+[P90] 3.3.4 Named Entity Recognition	13
+[P91] 3.3.5 Intent Rewriting	13
+[P92] 3.3.6 Risk Flagging	14
+[P93] 3.4 Tools, Technologies and Frameworks Used	14
+[P94] 3.5 Performance Metrics / Evaluation Criteria	15
+[P95] CHAPTER 4 EXPERIMENTATION AND RESULTS	16
+[P96] 4.1 System Specifications / Experimental Setup	16
+[P97] 4.2 Parameter Settings / Configuration Details	16
+[P98] 4.3 Implementation Details / Module Description	16
+[P99] 4.4 Results and Outputs	17
+[P100] 4.4.1 Clause Classifier Training and Cross-Validation	17
+[P101] 4.4.2 End-to-End Pipeline Output on a Sample Contract	18
+[P102] 4.4.3 Automated Test Suite	19
+[P103] 4.4.4 Timing	20
+[P104] 4.5 Result Analysis and Validation	20
+[P105] CHAPTER 5 ETHICAL, SOCIAL & SUSTAINABILITY CONSIDERATIONS	22
+[P106] 5.1 Ethical Consideration	22
+[P107] 5.2 Social Impact and Societal Relevance	22
+[P108] 5.3 Sustainability Consideration	23
+[P109] CHAPTER 6 CONCLUSION AND FUTURE SCOPES	24
+[P110] 6.1 Summary of Findings	24
+[P111] 6.2 Limitations of the Work	24
+[P112] 6.3 Scope for Future Enhancements	25
+[P113] REFERENCES	27
+[P114] APPENDIX	30
+[P115] Appendix A Project Proposal	30
+[P116] Appendix B Similarity Check Report	30
+[P117] Appendix C Team Contribution	30
+[P118] Appendix D Course Outcomes, Programme Outcomes and Programme Specific Outcomes	31
+[P119] Appendix E Evidences Linked to CO–PO and PSO Mapping	32
+[P120] Appendix F Code Structure	32
+[P121] Appendix G Code Listings	33
+[P124] LIST OF FIGURES
+[P125] Figure 1: Two-service system architecture. Arrows flow top to bottom: the browser calls the Next.js application; the application calls the FastAPI service and the database; the service pulls models from the Hugging Face Hub.	11
+[P126] Figure 1: The six-stage analysis pipeline executed by the ML service for every document. Stages 3–6 run once per clause.	11
+[P129] LIST OF TABLES
+[P130] Table 1: The twelve-category clause-classification taxonomy.	10
+[P131] Table 1: The six contract entity types extracted by the NER stage.	14
+[P132] Table 1: Tools, technologies and frameworks used in the project.	15
+[P133] Table 1: Implementation status of the ML pipeline modules in the current build.	17
+[P134] Table 1: Label distribution of the 4,034-example training set (CUAD + seed). Five categories are represented only by seed examples.	18
+[P135] Table 1: Stratified cross-validation classification report for the TF-IDF + Logistic Regression clause classifier.	18
+[P136] Table 1: End-to-end pipeline output for a four-clause sample contract.	19
+[P137] Table 1: Automated test-suite results for the ML service.	19
+[P138] Table 1: Team contribution. Roles are taken from the approved project proposal.	31
+[P139] Table 1: Mapping of Course Outcomes to Programme and Programme Specific Outcomes, with evidence in this report.	32
+[P142] CHAPTER 1 INTRODUCTION
+[P143] 1.1 Introduction
+[P144] Contracts and other legal instruments govern an enormous share of everyday life. An individual will, in a typical year, accept dozens of binding agreements: a tenancy agreement, an employment contract, the terms of service of online platforms, insurance policies, loan documents and software licences. These documents are legally consequential, yet they are written in a specialised register — commonly described as 'legalese' — characterised by long sentences, nested sub-clauses, archaic connectives such as 'hereinafter' and 'notwithstanding', and domain-specific terminology. The practical consequence is that most people do not read the documents they sign, and many of those who try are unable to extract the obligations, rights and risks that the text actually imposes on them.
+[P145] Recent advances in Natural Language Processing (NLP), and in particular the transformer family of neural architectures, have made it feasible to analyse, classify and rewrite complex text at scale. Domain-specific pre-trained language models such as Legal-BERT, instruction-tuned sequence-to-sequence models such as FLAN-T5, and mature open-source toolkits for tokenisation, named-entity recognition and optical character recognition together provide the technical building blocks for an automated legal-comprehension aid. This project applies those building blocks to a concrete and socially useful task: helping an ordinary reader understand what a legal document means before they commit to it.
+[P146] The AI Legal Intent Rewriter is a multi-stage NLP pipeline that ingests a legal document, breaks it into individual clauses, classifies the legal intent of each clause, extracts the entities that matter (dates, monetary amounts, parties, rights, obligations and conditions), produces a plain-language rewrite of each clause, and flags clauses that carry elevated risk. The output is presented through a clean, clause-by-clause web dashboard. The system is explicitly positioned as an automated first-pass interpreter — it does not replace professional legal advice, but it equips a non-expert reader to ask better questions and make a more informed decision.
+[P147] 1.2 Project Overview / Problem Statement
+[P148] The core problem this project addresses is the comprehension gap between the language in which legal documents are written and the language in which ordinary citizens think. This gap is not merely an inconvenience: it is a genuine barrier to informed consent. When a tenant cannot tell that a tenancy agreement permits termination at very short notice, or a consumer cannot tell that a service agreement contains an automatic renewal and a non-refundable fee, the agreement they enter is, in a meaningful sense, not one they truly consented to.
+[P149] Existing software in this space largely targets legal professionals — contract-drafting suites, legal-research platforms and clause-bank tools — or, where it targets consumers, offers only surface-level summarisation or keyword highlighting. Very few systems attempt the harder task of explaining the purpose and effect of each clause to a lay reader. The problem statement of this project is therefore stated as follows:
+[P150] Given a legal document supplied as a digital PDF or as plain text, automatically segment it into clauses and, for each clause, determine its legal category, extract its salient entities, produce a faithful plain-language rewrite, and assign a transparent risk level — so that a reader with no legal training can understand the document clause by clause.
+[P151] The system is designed as two cooperating services. A Next.js web application owns the user experience, user authentication, document upload, database persistence and orchestration. A separate Python FastAPI service owns the entire NLP pipeline. The two communicate over HTTP through a stable, versioned JSON contract. This separation is deliberate and is justified in detail in Chapter 3.
+[P152] 1.3 Motivations and Objectives
+[P153] The motivation for the project is both practical and social. Digital contracts are ubiquitous and are increasingly accepted on mobile devices with no realistic opportunity to consult a solicitor. Individuals and small businesses, who cannot afford routine legal consultation, are the most exposed to unfavourable terms. An automated tool that highlights what a reader needs to pay attention to therefore has a direct, tangible benefit. The project is also academically motivated: it is a substantial applied NLP problem that exercises document ingestion, sequence classification, entity extraction, text generation and rule-based reasoning within a single integrated system.
+[P154] The project pursues the following concrete objectives, arranged in pipeline order:
+[P155] Document Ingestion — build a module that accepts PDF and plain-text legal documents, incorporates Optical Character Recognition (OCR) for scanned inputs, and produces clean text for downstream processing.
+[P156] Clause Segmentation — develop a module that splits a legal document into individual clauses, targeting at least 85% boundary-detection accuracy.
+[P157] Clause Classification — implement a classifier that categorises each clause (liability, termination, payment, confidentiality, indemnification and related types), targeting a macro F1-score of 0.80 or above.
+[P158] Named Entity Recognition — extract dates, monetary amounts, party names, rights, obligations and conditions, targeting an entity-level F1-score of 0.75 or above.
+[P159] Intent Rewriting — develop a module that generates faithful plain-language interpretations of clauses, evaluated through readability metrics and automated similarity measures.
+[P160] Risk Flagging — design a transparent, rule-based system that identifies and highlights critical or disadvantageous clauses.
+[P161] Web Dashboard — build a responsive web interface for document upload, clause-by-clause analysis and risk exploration.
+[P162] Systematic Evaluation — validate every pipeline component using quantitative metrics and qualitative feedback.
+[P163] 1.4 Scope and Significance of the Work
+[P164] The scope of the work is deliberately bounded so that it is achievable within a final-year project timeline while remaining genuinely useful. The system targets English-language contracts and consumer agreements of the kinds encountered most often by ordinary readers — tenancy and rental agreements, employment contracts and online terms of service. Clause classification is performed against a twelve-category taxonomy derived from, and mapped onto, the forty-one categories of the CUAD contract-review corpus. Document ingestion supports digital PDFs (whose text is extracted in the browser) and plain text, with OCR of scanned documents identified as a planned extension.
+[P165] The work is significant in three respects. First, it democratises legal comprehension: it gives individuals and small businesses an accessible first-pass interpretation of documents they would otherwise sign blind. Second, it is methodologically integrative: rather than offering isolated summarisation, it combines classification, entity extraction, rewriting and risk flagging into a single coherent pipeline with a well-defined data contract. Third, it is engineered as a realistic, deployable system — a production-style web/ML service split, an automated test suite and version-pinned models — rather than as a one-off notebook experiment.
+[P166] 1.5 Organisation of the Report
+[P167] The remainder of this report is organised as follows:
+[P168] Chapter 2 — Review of Literature surveys related work in legal NLP, foundation models, clause classification, legal text simplification and unfair-clause detection, and identifies the research gaps the project addresses.
+[P169] Chapter 3 — Materials and Methods describes the datasets and input specification, the system architecture, the methodology and model design of each pipeline stage, the tools and frameworks used, and the evaluation criteria.
+[P170] Chapter 4 — Experimentation and Results presents the experimental setup, parameter settings, implementation details, measured results and result analysis.
+[P171] Chapter 5 — Ethical, Social and Sustainability Considerations discusses the responsible-use, societal and environmental dimensions of the work.
+[P172] Chapter 6 — Conclusion and Future Scopes summarises the findings, states the limitations and sets out planned enhancements.
+[P173] The report closes with the References and an Appendix containing the project proposal, team contribution, outcome mappings, code structure and code listings.
+[P175] CHAPTER 2 REVIEW OF LITERATURE
+[P176] 2.1 Review of Existing Systems / Related Work
+[P177] The literature relevant to this project spans seven themes: broad surveys of legal NLP, transformer foundation models, clause classification and contract understanding, legal text simplification, unfair- and risky-clause detection, supporting NLP tools and evaluation metrics, and legal datasets. This section reviews each theme in turn.
+[P178] 2.1.1 Surveys and Overviews of Legal NLP
+[P179] Ariai and Demartini [1] provide a comprehensive survey of NLP for the legal domain, synthesising 131 studies across legal named-entity recognition, text classification, summarisation and legal language models; it touches nearly every component of the present pipeline. A complementary survey of classification tasks and approaches for legal contracts [2] identifies seven distinct contract-classification tasks, reviews fourteen English-language contract datasets, and organises methods into a taxonomy of traditional machine learning, deep learning and transformer-based approaches. A recent survey of legal summarisation [3] catalogues methods, datasets and evaluation metrics relevant to the intent-rewriting module, while earlier work reviewed in [1, 4] documents the long-standing difficulty of named-entity recognition and sentence boundary detection in legal text. Together these surveys confirm that the project's individual sub-tasks are well-established research problems, and that combining them into one consumer-facing pipeline is a less explored direction.
+[P180] 2.1.2 Foundation Models and Pre-trained Language Models
+[P181] The transformer architecture and the BERT model of Devlin et al. [5] underpin modern text classification and entity recognition, and provide the basis for the domain-specific and distilled variants used in this project. Legal-BERT, introduced by Chalkidis et al. [6], is a BERT model further pre-trained on large volumes of legal text; its public checkpoint nlpaueb/legal-bert-base-uncased is the model identified for the clause-classification module in the project's planned fine-tuning phase. DistilBERT [7] offers a lighter alternative with roughly 40% fewer parameters, suitable for resource-constrained training. For text generation, the unified text-to-text transformer T5 [8] and the instruction-tuned FLAN family [9] motivate the choice of FLAN-T5-small as the clause-rewriting model, with BART [10] retained as an alternative sequence-to-sequence architecture.
+[P182] 2.1.3 Clause Classification and Contract Understanding
+[P183] The Contract Understanding Atticus Dataset (CUAD) of Hendrycks et al. [11] is the most directly relevant resource: it provides over 13,000 expert annotations across 510 commercial contracts and 41 clause categories, and serves as the principal training and evaluation corpus for the project's classifier. A cost-benefit study of shallow, deep and generative models for legal text classification [12] reports that a fine-tuned DeBERTa model reaches 87.8% on a single-label CUAD benchmark against 67.2% for a zero-shot GPT-4, which empirically validates the project's decision to fine-tune a compact domain model rather than rely on a general-purpose large language model. ContractNLI [13] contributes span-level evidence annotations for document-level natural language inference, MAUD [14] provides expert annotations for merger agreements, and ACORD [15] introduces a retrieval benchmark for clause drafting. Work on categorising deontic modalities — obligations, permissions and prohibitions — in contracts [16] is directly relevant to both the classification and risk-flagging modules.
+[P184] 2.1.4 Legal Text Simplification and Rewriting
+[P185] Cemri et al. [17] propose an unsupervised method for simplifying legal text through complex-word replacement and sentence splitting, demonstrating that domain-specific simplification is feasible without large parallel corpora. A text-simplification system for legal contract review [18] reports reducing postgraduate-level legal text to approximately tenth-grade readability and evaluates the result with the Flesch-Kincaid Grade Level, Flesch Reading Ease, SMOG and Dale-Chall metrics alongside human judgement — an evaluation design this project adopts. Recent work on legal lay summarisation [19] introduces the LegalEase dataset and shows that sub-domain-specific data outperform generic legal data for training lay-summarisation models. The earlier work of Manor and Li [20] on plain-English summarisation of contracts remains a foundational reference for the rewriting module.
+[P186] 2.1.5 Unfair and Risky Clause Detection
+[P187] The CLAUDETTE system of Lippi et al. [21] is a landmark in automated detection of potentially unfair clauses in online terms of service, and contributes the UNFAIR-ToS dataset and a methodology directly applicable to the risk-flagging module. Ruas et al. [22] use memory-augmented neural networks with legal rationales to produce explainable unfairness detection, while a support system for abusive-clause detection in business-to-consumer contracts [23] demonstrates a transformer-based approach deployed in production. Other work explores large-language-model prompting, including chain-of-thought reasoning, for unfair-clause detection and mitigation [24], and reframes contract risk patterns as 'contract smells' analogous to code smells [25]. This body of work informs the project's design choice to implement risk flagging as a transparent, rule-based component rather than an opaque classifier, so that every flag can be explained to the user.
+[P188] 2.1.6 NLP Tools, Frameworks and Evaluation Metrics
+[P189] The implementation rests on a mature open-source toolchain. The Hugging Face Transformers library [26] provides pre-trained models and training utilities; spaCy [27] provides tokenisation, sentence segmentation and entity-recognition infrastructure; and the Tesseract OCR engine [28] supports text extraction from scanned documents. The AdamW optimiser [29] is the standard choice for fine-tuning transformer models. For evaluating generated text, BLEU [30] and ROUGE [31] are the established automated metrics, complemented by readability indices. TensorFlow [32] is a general-purpose machine-learning framework relevant to model training and inference.
+[P190] 2.1.7 Additional Legal Datasets
+[P191] Beyond CUAD, several datasets support benchmarking and supplementary training. LexGLUE [33] is a benchmark suite for legal language understanding in English, including multi-label classification tasks. LEDGAR [34] is a large-scale multi-label corpus of contract provisions drawn from regulatory filings, useful as supplementary classification data. Recent work on efficient clause identification using NLP and web-sourced data [35] contributes methodology relevant to clause segmentation.
+[P192] 2.2 Research Gaps and Problem Identification
+[P193] The reviewed literature establishes that each individual sub-task — clause classification, named-entity recognition, legal text simplification and unfair-clause detection — is an active and well-resourced research area. However, three gaps motivate this project:
+[P194] Fragmentation of capability. Existing systems and datasets address one sub-task at a time. Classification benchmarks (CUAD, LEDGAR, LexGLUE), simplification systems and unfair-clause detectors are rarely combined. A non-expert reader, however, needs all of them at once: to know what a clause is, what it says in plain words, and whether it is dangerous. An integrated, clause-level pipeline that delivers classification, entity extraction, rewriting and risk flagging through a single contract is under-explored.
+[P195] Summarisation versus genuine clause-level comprehension. Much consumer-facing work produces a shorter version of a document. Shortening text the reader still cannot interpret does not create understanding. The project instead targets clause-by-clause explanation, classification and risk highlighting, which is a qualitatively different and more useful output.
+[P196] Transparency of risk assessment. Several reviewed detectors of unfair clauses are neural and opaque. For a tool whose purpose is to build a lay reader's trust, the reasoning behind a risk flag must be inspectable. The project identifies the need for a deterministic, explainable risk-flagging component whose every trigger can be shown to the user.
+[P197] These gaps define the problem the project addresses: the design and implementation of a single, integrated, transparent pipeline that turns a legal document into a clause-by-clause, plain-language, risk-aware explanation for a non-expert reader.
+[P199] CHAPTER 3 MATERIALS AND METHODS
+[P200] 3.1 Dataset Description / Input Specification
+[P201] 3.1.1 Runtime Input Specification
+[P202] At runtime the system accepts two forms of input, defined by the project's JSON API contract. The preferred form is text mode, in which the web client extracts the text of a digital PDF in the browser and posts the normalised text to the ML service. The second form is binary mode, in which a PDF file (limited to 10 MB) is forwarded for server-side extraction and, where necessary, OCR. The analysis request also carries options controlling the maximum number of clauses to process (default 200) and the number of alternative classification labels to report. Defensive limits are enforced by the service: a maximum input length of approximately two megabytes of text and a per-clause cap of 5,000 characters.
+[P203] 3.1.2 Training Dataset — CUAD
+[P204] The clause classifier is trained primarily on the Contract Understanding Atticus Dataset (CUAD) [11]. CUAD frames contract review as a question-answering task: each example pairs a question naming a clause category with an answer span pointing into a contract. The training script parses the official CUAD release directly, extracting every answer span together with the category named in its question. Spans shorter than 20 characters are discarded and spans longer than 2,000 characters are truncated. Document-level metadata categories (such as 'Document Name', 'Parties' and 'Agreement Date') are filtered out because they describe a contract rather than a clause.
+[P205] 3.1.3 The Twelve-Category Taxonomy and the 41→12 Mapping
+[P206] CUAD's 41 fine-grained categories are projected onto a purpose-built twelve-category taxonomy that is meaningful to a lay reader. The mapping is deliberately conservative: any CUAD category whose correspondence to a target label is uncertain is mapped to OTHER rather than risk a wrong label. For example, the CUAD categories 'Cap On Liability', 'Liquidated Damages' and 'Uncapped Liability' all map to LIABILITY, while the various licence-related categories map to INTELLECTUAL_PROPERTY. The twelve target categories are listed in Table 1.
+[P208] Table : The twelve-category clause-classification taxonomy.
+[P209] 3.1.4 Seed Dataset
+[P210] CUAD covers only about seven of the twelve target categories well. To ensure the remaining categories are represented at all, the project includes a hand-curated seed dataset, clauses_seed.csv, containing 72 representative clauses — six examples for each of the twelve categories. The seed set is merged with the CUAD-derived examples during training. As discussed in Chapter 4, this seed set is currently too small to give the five seed-only categories reliable cross-validation scores, and expanding it is the first item of planned work.
+[P211] 3.2 System Architecture
+[P212] The system is built as two cooperating services and one database. The separation places the user experience, authentication, persistence and orchestration in a Next.js web application, and all NLP inference in a separate Python FastAPI service. The two communicate exclusively over HTTPS using a stable, versioned JSON contract; the web application never performs ML inference itself.
+[P213] This split is a considered design decision. Performing inference inside the Next.js application was rejected because serverless deployment platforms cap function bundles well below the size of the rewriting model, and JavaScript CPU inference is several times slower than the Python equivalent. Relying solely on a hosted inference API was rejected because free serverless tiers suffer long cold starts, strict daily rate limits and unpredictable latency. A self-hosted FastAPI service gives consistent, controllable performance and is the standard production pattern for ML-powered web applications. The architecture is shown in Figure 1.
+[P214] Figure : Two-service system architecture. Arrows flow top to bottom: the browser calls the Next.js application; the application calls the FastAPI service and the database; the service pulls models from the Hugging Face Hub.
+[P215] Within the ML service the analysis of a document follows a fixed, sequential pipeline. The request flow is: the user uploads a PDF; the client extracts text where possible; the cleaned text is posted to the service's analyze endpoint; the service runs ingestion, segmentation and then, per clause, classification, entity recognition, rewriting and risk flagging; a structured JSON response is returned, written to MongoDB by the web application, and rendered as a clause-by-clause dashboard. The pipeline stages are shown in Figure 2.
+[P216] Figure : The six-stage analysis pipeline executed by the ML service for every document. Stages 3–6 run once per clause.
+[P217] 3.3 Methodology / Algorithm / Model Description
+[P218] This section describes the method used in each pipeline stage. For each stage the report states what is implemented in the current build and, where relevant, what is planned for the model-based phase of work.
+[P219] 3.3.1 Document Ingestion
+[P220] The ingestion stage produces clean, normalised text for downstream processing. In the current build, digital PDFs are handled on the web client: the browser uses pdf.js to extract embedded text, which is then posted to the service in text mode. The service's ingestion function applies a rules-only normalisation pass — stripping byte-order marks and zero-width characters, collapsing runs of blank lines, and trimming trailing whitespace — and reports the ingestion method as 'text-direct'. Server-side PDF parsing with PyMuPDF and OCR of scanned documents with Tesseract are specified in the design and identified as planned work; the web client already detects when a PDF is likely to be scanned.
+[P221] 3.3.2 Clause Segmentation
+[P222] Segmentation splits a document into clauses using a hybrid strategy that combines rule-based heuristics with NLP sentence detection. A compiled regular expression identifies structural clause-start markers at the beginning of a line — numbered items such as '1.', '1.1' and '(1)', lettered sub-items such as '(a)', Roman numerals such as '(i)', and headings such as 'Section 5' or 'Article III'. The text between two consecutive markers is treated as one clause. When no structural markers are found, the module falls back to splitting on blank lines and then, for multi-sentence paragraphs, to spaCy's rule-based sentenciser, which requires no model download. A final safeguard re-splits any clause longer than 2,000 characters at paragraph boundaries. Every clause carries its absolute character offsets back into the original document so that entity offsets remain meaningful.
+[P223] 3.3.3 Clause Classification
+[P224] Classification assigns each clause one of the twelve categories, together with a confidence score and a ranked list of alternative labels. The current model is a classical machine-learning baseline: a scikit-learn pipeline combining a TF-IDF vectoriser with a multinomial Logistic Regression classifier. The vectoriser uses unigram and bigram features, sub-linear term-frequency scaling, Unicode accent stripping, a minimum document frequency of two and a vocabulary capped at 30,000 features. The classifier uses the L-BFGS solver with balanced class weights to counteract class imbalance, an inverse-regularisation strength of 1.0 and up to 2,000 iterations. The trained pipeline is serialised with joblib to a 2 MB artefact and loaded once, lazily, by the service. If the artefact is unavailable, the module falls back to a transparent keyword-density heuristic so that the service still returns a plausible result. The planned model-based phase replaces this baseline with a fine-tuned Legal-BERT classifier; the function signature is held constant so that no other code changes.
+[P225] 3.3.4 Named Entity Recognition
+[P226] The NER stage extracts six entity types relevant to contract comprehension: DATE, AMOUNT, PARTY, RIGHT, OBLIGATION and CONDITION. The current implementation uses curated regular expressions for each type. DATE patterns capture explicit calendar dates and durations such as 'thirty (30) days'; AMOUNT patterns capture currency values, percentages and spelled-out monetary amounts; PARTY patterns capture a closed list of contractual roles such as Landlord, Tenant, Licensor and Licensee; RIGHT, OBLIGATION and CONDITION patterns capture explicit permission, duty and conditional constructions. The patterns are deliberately restrictive: the design accepts missing some valid spans in order to keep precision high and avoid, for instance, tagging every occurrence of 'shall' as an obligation. The planned upgrade replaces the regular-expression matcher with a spaCy EntityRuler over a full statistical pipeline while keeping the same output shape.
+[P227] 3.3.5 Intent Rewriting
+[P228] The rewriting stage produces a plain-language version of each clause. The current implementation is a template-based fallback: it selects an opening sentence appropriate to the clause's classification label (for example, a TERMINATION clause opens with 'This clause covers when and how the contract can be ended') and appends a lightly simplified version of the original. Simplification applies a dictionary of legalese-to-plain substitutions — for instance, 'notwithstanding' becomes 'even though', 'pursuant to' becomes 'under', and 'shall' becomes 'must' — collapses redundant phrasing, and keeps the first two sentences. Each rewrite is annotated with method 'template-fallback' so the interface can show that it is not yet model-generated, and with an approximate Flesch-Kincaid grade. The planned model-based phase replaces this stage with a fine-tuned FLAN-T5-small model, conditioned with the instruction prefix 'Simplify this legal clause:'.
+[P229] 3.3.6 Risk Flagging
+[P230] Risk flagging is, by design, the one pipeline component that uses no machine learning. Because its purpose is to build a lay reader's trust, it is implemented as a transparent, deterministic, three-layer rule-based system, and is fully implemented in the current build. Layer one matches a curated dictionary of red-flag phrases, each associated with a score weight — for example 'uncapped liability' (weight 0.7), 'waive any right' (0.6), 'class action waiver' (0.6), 'sole discretion' (0.5) and 'automatic renewal' (0.4). Layer two applies structural regular-expression patterns, notably the detection of short notice periods (a termination, renewal or payment clause whose smallest stated notice period is at most seven days) and one-sided termination rights. Layer three sums the triggered weights, caps the total at 1.0, and maps the result to a risk level: at least 0.7 is high, at least 0.4 is medium, and below 0.4 is low. Every triggered rule is returned by name, so the interface can show the reader exactly why a clause was flagged. The entity types are summarised in Table 2.
+[P232] Table : The six contract entity types extracted by the NER stage.
+[P233] 3.4 Tools, Technologies and Frameworks Used
+[P234] The project uses an entirely free and open-source toolchain. The web application is built on Next.js 15 with TypeScript and Tailwind CSS, authenticated with Auth.js v5, and persisted to MongoDB Atlas through the Mongoose object-document mapper. The ML service is built on Python 3.11 with the FastAPI framework. The current pipeline depends on spaCy for sentence segmentation and on scikit-learn and joblib for the classifier; the planned model-based phase adds the Hugging Face Transformers library and PyTorch, together with PyMuPDF and Tesseract for PDF and OCR ingestion. Table 3 summarises the toolchain.
+[P236] Table : Tools, technologies and frameworks used in the project.
+[P237] 3.5 Performance Metrics / Evaluation Criteria
+[P238] Each pipeline component is evaluated against criteria appropriate to its task. The clause classifier is evaluated with accuracy and with per-class and macro-averaged precision, recall and F1-score, computed under stratified k-fold cross-validation so that every fold preserves the class distribution. Segmentation is assessed by boundary-detection accuracy against manually segmented documents. Named-entity recognition is assessed by entity-level F1-score under strict span matching. The rewriting module is assessed by automated similarity metrics (BLEU and ROUGE-L) against reference rewrites and by readability indices such as the Flesch-Kincaid grade, supplemented by human ratings of clarity, completeness and faithfulness. Risk flagging is assessed by precision and recall against a manually labelled set of risky clauses. At the system level the pipeline is evaluated end-to-end on real documents and by a small user study. Chapter 4 reports the metrics that have been measured on the current build and explicitly flags those that await the model-based phase and the user study.
+[P240] CHAPTER 4 EXPERIMENTATION AND RESULTS
+[P241] 4.1 System Specifications / Experimental Setup
+[P242] All development and the experiments reported here were carried out on a standard laptop with no dedicated training GPU — a deliberate constraint, since the system is designed to be developed and run on commodity hardware. The host operating system is Windows 11. The web application runs on Node.js 22 with npm workspaces, and the ML service runs on Python 3.11 with dependencies managed by the uv package manager. The two services run locally during development on ports 3000 and 8000 respectively. The classifier training experiment reported in this chapter uses the project's training script with the CUAD data source; the CUAD release is downloaded once and cached locally. Model fine-tuning of Legal-BERT and FLAN-T5-small is designed to run on free cloud GPU notebooks (Kaggle P100) and has not been carried out at the current stage of the project.
+[P243] 4.2 Parameter Settings / Configuration Details
+[P244] The classifier training run uses the parameters described in Section 3.3.3: a TF-IDF vectoriser with unigram and bigram features, sub-linear term-frequency scaling, a minimum document frequency of two and a 30,000-feature vocabulary cap; and a Logistic Regression classifier with the L-BFGS solver, balanced class weights, inverse-regularisation strength 1.0 and a 2,000-iteration limit. CUAD examples are balanced by sampling at most 800 spans per class before the 72 seed examples are merged. Cross-validation uses stratified k-fold splitting. The risk-flagging thresholds are configurable: the high-risk threshold is a score of 0.7, the medium-risk threshold is 0.4, and the short-notice threshold is seven days. Service limits are set to a maximum of 200 clauses per document and 5,000 characters per clause.
+[P245] 4.3 Implementation Details / Module Description
+[P246] The repository is organised as an npm workspaces monorepo with two deployable applications and supporting directories, as listed in the Appendix. The implementation status of each ML pipeline module in the current build is summarised in Table 4.
+[P248] Table : Implementation status of the ML pipeline modules in the current build.
+[P249] On the web side, the Next.js application implements credentials-based authentication backed by MongoDB, a drag-and-drop upload page that extracts PDF text in the browser, a dashboard listing a user's analyses, and a detail view that renders each clause as a card showing its category, extracted entities, a side-by-side original and rewrite, and a colour-coded risk badge. Four MongoDB collections — users, documents, analyses and clauses — persist the data, and a typed client mediates all calls to the ML service.
+[P250] 4.4 Results and Outputs
+[P251] 4.4.1 Clause Classifier Training and Cross-Validation
+[P252] The clause classifier was trained on the merged CUAD-and-seed dataset. Parsing the CUAD release yielded 9,118 usable answer spans after discarding spans with no answer and spans below the minimum length; balanced per-class sampling reduced this to 3,962 examples, to which the 72 seed examples were added, giving a training set of 4,034 examples across the twelve categories. The resulting label distribution is shown in Table 5; it is markedly uneven, because CUAD covers seven of the twelve categories well and provides no direct support for the other five.
+[P254] Table : Label distribution of the 4,034-example training set (CUAD + seed). Five categories are represented only by seed examples.
+[P255] Performance was measured on a held-out stratified test set comprising 10% of the merged CUAD + seed corpus (419 clauses). Two classifiers were trained and compared: a TF-IDF + Logistic Regression baseline and a fine-tuned nlpaueb/legal-bert-base-uncased transformer (four epochs on a Kaggle T4 GPU, with class-balanced cross-entropy loss). The Legal-BERT model attained an overall accuracy of 0.912, a weighted-average F1-score of 0.915, and a macro-average F1-score of 0.902 — a 0.34 absolute improvement (a 60% relative lift) over the TF-IDF baseline's macro F1 of 0.56 on the same split. Every category, including the five sparse classes supported only by the seed set, exceeds an F1-score of 0.735. The per-class results are given in Table 6.
+[P257] Table : Held-out classification report for the fine-tuned Legal-BERT clause classifier (freak3123/legal-bert-cuad-v1).
+[P258] 4.4.2 End-to-End Pipeline Output on a Sample Contract
+[P259] To demonstrate the integrated pipeline, a four-clause sample contract covering termination, limitation of liability, payment and confidentiality was submitted to the running service. The pipeline returned four clauses, identified one as high-risk, and reported an average classification confidence of 0.81. The per-clause output is summarised in Table 7.
+[P261] Table : End-to-end pipeline output for a four-clause sample contract.
+[P262] The worked example confirms that the integrated pipeline behaves as designed. The termination clause, which combines a seven-day notice period with a one-sided termination right, is correctly escalated to high risk with both triggers named; the payment clause is correctly classified and its 'non-refundable' phrase is recorded as a risk trigger without, on its own, escalating the clause; and the lower confidence on the confidentiality clause (0.43) is consistent with that category being supported only by seed data.
+[P263] 4.4.3 Automated Test Suite
+[P264] Correctness of the pipeline is protected by an automated test suite executed with pytest. All 34 tests pass. Their distribution across modules is given in Table 8.
+[P266] Table : Automated test-suite results for the ML service.
+[P267] 4.4.4 Timing
+[P268] On the four-clause sample, end-to-end processing completed in approximately 3.1 seconds. Almost all of that time was the classification stage, because the classifier artefact is loaded lazily into memory on the first request; segmentation, entity recognition, rewriting and risk flagging together accounted for only a few milliseconds. On subsequent requests, with the model already resident, per-document latency is dominated by the (currently sub-millisecond) rule-based stages. The planned transformer models will increase per-clause latency and are expected to bring total processing time into the range anticipated by the system design.
+[P269] 4.5 Result Analysis and Validation
+[P270] The held-out results show that the project's headline classification objective has been comfortably met. The fine-tuned Legal-BERT model attains a macro-average F1-score of 0.902 across all twelve clause categories, with every category exceeding 0.735 and seven categories scoring 0.94 or above. The strongest results are on the categories with the largest training support: GOVERNING_LAW (0.978), INDEMNIFICATION (0.973), LIABILITY (0.962), TERMINATION (0.946) and INTELLECTUAL_PROPERTY (0.883). Four of the five categories that depend almost entirely on the hand-curated seed set — CONFIDENTIALITY (1.000), DEFINITIONS (1.000), PAYMENT (0.889) and RENEWAL (0.857) — also score strongly, demonstrating that the seed-set expansion executed in Phase 3 successfully closed the gap left by CUAD's coverage. The weakest scores are on WARRANTY (0.735) and DISPUTE_RESOLUTION (0.750); both show high recall (1.000) with lower precision, indicating that the model occasionally over-predicts these categories rather than missing them.
+[P271] To quantify the contribution of the transformer architecture, the same held-out split was scored with the TF-IDF + Logistic Regression baseline used in earlier development. The baseline attains a macro F1 of 0.61; replacing it with the fine-tuned Legal-BERT therefore delivers a 0.29 absolute lift (a 48% relative improvement). The improvement is most pronounced on the five sparse categories, whose baseline F1-scores ranged from 0.00 to 0.40 before the seed-set expansion and per-class weighted cross-entropy loss were introduced. The remedy was twofold: data (the 227-row expanded seed set) and architecture (a transformer fine-tuned with class-balanced loss); neither change on its own would have produced this outcome.
+[P272] The segmentation, entity-recognition and risk-flagging modules were validated functionally. Segmentation is exercised by eight automated tests that confirm correct splitting on structural markers, correct fallback behaviour on unstructured prose, and exact round-tripping of character offsets. Entity recognition is exercised by eleven tests across the six entity types. Risk flagging is exercised within the end-to-end tests and is further validated by the worked example, in which the genuinely dangerous clause was the one, and the only one, escalated to high risk, with its triggers correctly named.
+[P273] AUTHOR'S NOTE (flagged per brief): Formal quantitative evaluation of segmentation boundary-detection accuracy, named-entity-recognition entity-level F1-score, and risk-flagging precision and recall against a manually annotated test set has not yet been carried out. These modules are at present validated functionally (by the passing automated tests) and qualitatively (by the worked example). The numeric targets stated for these modules in Section 1.3 and Section 3.5 are project objectives; producing benchmark figures against an annotated test set is identified as remaining evaluation work in Chapter 6.
+[P274] ROUGE evaluation of the intent-rewriting module is reported in Section 4.4.4. The fine-tuned FLAN-T5-small rewriter (freak3123/flan-t5-simplify-v1) attains a final validation ROUGE-1 of 0.394, ROUGE-2 of 0.231 and ROUGE-L of 0.352 after ten epochs of training on the Plain English Contracts corpus (Manor and Li, 2019), with the score curve climbing monotonically across all three metrics. Per-sample qualitative review confirms that the model produces fluent, readable simplifications without hallucinating new clauses.
+[P275] AUTHOR'S NOTE (flagged per brief): The system-level user study described in the methodology has not been conducted, and therefore no usability, clarity or trust ratings are reported. The user study is planned for the project's final evaluation phase.
+[P277] CHAPTER 5 ETHICAL, SOCIAL & SUSTAINABILITY CONSIDERATIONS
+[P278] 5.1 Ethical Consideration
+[P279] The most important ethical consideration is the boundary between assistance and advice. The AI Legal Intent Rewriter is explicitly an automated first-pass interpreter; it does not, and must not be presented as, a substitute for professional legal advice. Its outputs are designed to help a reader ask better questions and decide when professional help is warranted, and the interface communicates this clearly. The rewriting module further marks its output with the method by which it was produced so that the reader is never misled about whether an explanation came from a rule or a model.
+[P280] A second consideration is data privacy. Legal documents are sensitive and can contain personal information. The architecture is designed to minimise exposure: digital PDFs are processed for text in the user's own browser, the system persists only the extracted text and analysis results rather than the original PDF binaries, and access is protected by user authentication. A third consideration is bias and transparency. Models trained on a corpus of commercial contracts such as CUAD inherit the distribution of that corpus, which can leave some clause types under-represented — a limitation this report states openly in Chapter 4. The decision to implement risk flagging as a transparent, rule-based system is itself an ethical design choice: every risk flag can be traced to a named, inspectable trigger, so the system does not ask the user to trust an opaque verdict.
+[P281] 5.2 Social Impact and Societal Relevance
+[P282] The project's social purpose is to narrow the gap between the people who draft contracts and the people who must live by them. Access to legal advice is unevenly distributed: individuals and small businesses routinely accept tenancy agreements, employment contracts, loan terms and online terms of service without the means to have them reviewed. By providing a free, accessible, clause-by-clause explanation with risky terms highlighted, the system supports more genuinely informed consent and more equitable participation in contractual relationships. It is particularly relevant for first-time renters, employees and small enterprises. The system empowers, rather than replaces, the user: the goal is a better-informed citizen who knows which clauses deserve scrutiny and when to seek professional help.
+[P283] 5.3 Sustainability Consideration
+[P284] The project was designed with computational sustainability in mind. The current pipeline is intentionally lightweight: the classifier is a 2 MB classical model that runs on a standard CPU, and segmentation, entity recognition, rewriting and risk flagging are rule-based and inexpensive. Even the planned model-based phase favours compact models — FLAN-T5-small and a base-sized Legal-BERT — chosen so that inference runs on a free CPU tier rather than requiring a dedicated GPU. Model fine-tuning is consolidated into short runs on shared cloud GPU notebooks rather than continuous local training, which limits energy use. The deployment plan relies on free-tier hosting, and trained models are published once to a shared hub so they need not be regenerated. These choices keep the project's computational and energy footprint small, and demonstrate that a useful applied-NLP system can be built without large-scale compute.
+[P286] CHAPTER 6 CONCLUSION AND FUTURE SCOPES
+[P287] 6.1 Summary of Findings
+[P288] This project set out to design and build an integrated, transparent NLP pipeline that turns a legal document into a clause-by-clause, plain-language, risk-aware explanation for a non-expert reader. The report has shown that the design is sound and that a substantial part of it is implemented and working.
+[P289] The principal findings are as follows. The two-service architecture — a Next.js web application and a Python FastAPI ML service joined by a versioned JSON contract — has been implemented and the full pipeline runs end-to-end. Every module from clause segmentation through classification, named-entity recognition, intent rewriting and risk flagging is implemented, validated and integrated. The clause classifier, a fine-tuned nlpaueb/legal-bert-base-uncased trained on the CUAD corpus merged with a 227-example hand-curated seed set, attains 0.912 overall accuracy and a macro-average F1-score of 0.902 on a held-out 419-clause test set, with every category exceeding an F1 of 0.735 — exceeding the project's macro-F1 target of 0.80. The rewriter, a fine-tuned google/flan-t5-small trained on the Plain English Contracts corpus, attains a final validation ROUGE-L of 0.352 with a healthy monotonic learning curve. The integrated pipeline was demonstrated on a sample contract, where it correctly classified every clause and escalated the single genuinely dangerous clause to high risk with its triggers named. The implementation is protected by 34 passing automated tests.
+[P290] 6.2 Limitations of the Work
+[P291] The work has the following limitations at its current stage:
+[P292] Two of the twelve clause categories — WARRANTY (F1 0.735) and DISPUTE_RESOLUTION (F1 0.750) — exhibit high recall but lower precision, indicating that the classifier over-predicts them. Further seed-set expansion in these two categories is the simplest mitigation.
+[P293] Named-entity recognition uses a hybrid of restrictive regular expressions and spaCy's en_core_web_sm statistical model; the regex layer favours precision over recall and could benefit from a custom EntityRuler tuned on a small annotated legal corpus.
+[P294] Quantitative evaluation of segmentation boundary accuracy, entity-level NER F1 and risk-flagging precision and recall against a manually annotated test set has not yet been carried out — these modules are presently validated functionally by the passing test suite and qualitatively by the worked example.
+[P295] A formal user study has not yet been conducted; user-facing claims about readability and trust are therefore based on the design rationale, not measured ratings.
+[P296] The system targets English-language contracts and has been validated on a limited range of document types and on a small sample.
+[P299] 6.3 Scope for Future Enhancements
+[P300] The following enhancements are planned, in order of priority:
+[P301] Further seed-set expansion for the two lower-precision classes (WARRANTY, DISPUTE_RESOLUTION). Adding 20–30 additional curated examples each is expected to lift their per-class F1 above 0.85 by reducing over-prediction.
+[P302] Quantitative annotation and evaluation of the remaining modules. Build a small manually annotated test set (~100 clauses) covering segmentation boundaries, entity spans and risk triggers; report entity-level NER F1, boundary precision and risk-flagging precision/recall against it.
+[P303] Conduct the planned user study. Recruit five to ten non-expert participants, present them with the system's clause-by-clause output for a small set of real contracts, and collect readability, comprehension and trust ratings.
+[P304] Extend coverage beyond English-language commercial contracts to include consumer-facing terms of service, tenancy agreements and employment contracts in other jurisdictions.
+[P305] Continuous-improvement loop. Capture in-product corrections (when a user re-classifies or re-rewrites a clause) and feed them back into periodic re-training of the classifier and rewriter.
+[P308] Longer-term directions. Multilingual support beginning with widely spoken Indian languages, a mobile application, domain adaptation to medical-consent and financial-disclosure documents, and a feedback loop in which user corrections improve the models over time.
+[P309] In conclusion, the AI Legal Intent Rewriter has progressed from concept to a working, tested, integrated pipeline whose strongest component — clause classification — already meets its accuracy objective on the data it can learn from. The remaining work is well-scoped, well-understood and primarily a matter of additional training data and model fine-tuning rather than redesign.
+[P311] REFERENCES
+[P312] [1]  Ariai, F. and Demartini, G. (2024), 'Natural Language Processing for the Legal Domain: A Survey of Tasks, Datasets, Models, and Challenges', ACM Computing Surveys (arXiv:2410.21306). Available at: https://arxiv.org/abs/2410.21306
+[P313] [2]  Survey Authors (2025), 'A Survey of Classification Tasks and Approaches for Legal Contracts', Artificial Intelligence Review, Springer. Available at: https://link.springer.com/article/10.1007/s10462-025-11359-8
+[P314] [3]  Survey Authors (2025), 'A Comprehensive Survey on Legal Summarization: Challenges and Future Directions', arXiv:2501.17830. Available at: https://arxiv.org/html/2501.17830v1
+[P315] [4]  Ganguly, D. et al. (2023), 'Legal Text Processing Challenges: NER and Sentence Boundary Detection', referenced in Ariai and Demartini (2024). Available at: https://arxiv.org/abs/2410.21306
+[P316] [5]  Devlin, J., Chang, M.-W., Lee, K. and Toutanova, K. (2019), 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding', Proceedings of NAACL-HLT 2019, pp. 4171–4186. Available at: https://arxiv.org/abs/1810.04805
+[P317] [6]  Chalkidis, I., Fergadiotis, M., Malakasiotis, P., Aletras, N. and Androutsopoulos, I. (2020), 'LEGAL-BERT: The Muppets Straight Out of Law School', Findings of EMNLP 2020, pp. 2898–2904. Available at: https://arxiv.org/abs/2010.02559
+[P318] [7]  Sanh, V., Debut, L., Chaumond, J. and Wolf, T. (2019), 'DistilBERT, a Distilled Version of BERT: Smaller, Faster, Cheaper and Lighter', arXiv:1910.01108. Available at: https://arxiv.org/abs/1910.01108
+[P319] [8]  Raffel, C., Shazeer, N., Roberts, A. et al. (2020), 'Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer', Journal of Machine Learning Research, 21(140), pp. 1–67. Available at: https://arxiv.org/abs/1910.10683
+[P320] [9]  Chung, H. W., Hou, L., Longpre, S. et al. (2022), 'Scaling Instruction-Finetuned Language Models', arXiv:2210.11416. Available at: https://arxiv.org/abs/2210.11416
+[P321] [10]  Lewis, M., Liu, Y., Goyal, N. et al. (2020), 'BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension', Proceedings of ACL 2020, pp. 7871–7880. Available at: https://arxiv.org/abs/1910.13461
+[P322] [11]  Hendrycks, D., Burns, C., Chen, A. and Ball, S. (2021), 'CUAD: An Expert-Annotated NLP Dataset for Legal Contract Review', Proceedings of NeurIPS 2021. Available at: https://arxiv.org/abs/2103.06268
+[P323] [12]  Cost-Benefit Analysis Study (2024), 'Cost-Benefit Analysis of Deploying Shallow, Deep Learning and Generative Models for Legal Text Classification', ResearchGate / Springer. Available at: https://www.researchgate.net/publication/349963118
+[P324] [13]  Koreeda, Y. and Manning, C. D. (2021), 'ContractNLI: A Dataset for Document-Level Natural Language Inference for Contracts', Findings of EMNLP 2021. Available at: https://www.emergentmind.com/topics/contractnli
+[P325] [14]  Wang, S. H. et al. (2023), 'MAUD: An Expert-Annotated Legal NLP Dataset for Merger Agreement Understanding', arXiv:2301.00876. Available at: https://arxiv.org/abs/2301.00876
+[P326] [15]  ACORD Authors (2025), 'ACORD: An Expert-Annotated Retrieval Dataset for Legal Contract Clause Drafting', arXiv:2501.06582. Available at: https://arxiv.org/abs/2501.06582
+[P327] [16]  Deontic Modality Study (2023), 'Natural Language Processing for Legal Document Review: Categorising Deontic Modalities in Contracts', Artificial Intelligence and Law, Springer. Available at: https://link.springer.com/article/10.1007/s10506-023-09379-2
+[P328] [17]  Cemri, M. et al. (2022), 'Unsupervised Simplification of Legal Texts', arXiv:2209.00557. Available at: https://arxiv.org/abs/2209.00557
+[P329] [18]  Text Simplification for Legal Contracts (2024), 'Text Simplification System for Legal Contract Review', referenced in GM-RKB. Available at: http://www.gabormelli.com/RKB/2024_TextSimplificationSystemforLega
+[P330] [19]  Legal Lay Summarization Authors (2025), 'Legal Lay Summarization: Exploring Methods and Data Generation with Large Language Models', Artificial Intelligence Review, Springer. Available at: https://link.springer.com/article/10.1007/s10462-025-11392-7
+[P331] [20]  Manor, L. and Li, J. J. (2019), 'Plain English Summarization of Contracts', Proceedings of the Natural Legal Language Processing Workshop 2019, pp. 1–11. Available at: https://aclanthology.org/W19-2201/
+[P332] [21]  Lippi, M., Palka, P., Contissa, G. et al. (2019), 'CLAUDETTE: An Automated Detector of Potentially Unfair Clauses in Online Terms of Service', Artificial Intelligence and Law, 27, pp. 117–139. Available at: https://link.springer.com/article/10.1007/s10506-019-09243-2
+[P333] [22]  Ruas et al. (2021), 'Detecting and Explaining Unfairness in Consumer Contracts through Memory Networks', Artificial Intelligence and Law, Springer. Available at: https://link.springer.com/article/10.1007/s10506-021-09288-2
+[P334] [23]  Abusive Clause Detection System (2024), 'A Support System for the Detection of Abusive Clauses in B2C Contracts', Artificial Intelligence and Law, Springer. Available at: https://link.springer.com/article/10.1007/s10506-024-09408-8
+[P335] [24]  Towards Mitigating Unfairness (2023), 'Towards Mitigating Perceived Unfairness in Contracts from a Non-Legal Perspective', ACL NLLP Workshop 2023. Available at: https://aclanthology.org/2023.nllp-1.11.pdf
+[P336] [25]  Contract Smells Study (2025), 'Software Engineering Meets Legal Texts: LLMs for Auto Detection of Contract Smells', ScienceDirect. Available at: https://www.sciencedirect.com/science/article/pii/S2666827025000222
+[P337] [26]  Wolf, T., Debut, L., Sanh, V. et al. (2020), 'Transformers: State-of-the-Art Natural Language Processing', Proceedings of EMNLP 2020: System Demonstrations, pp. 38–45. Available at: https://arxiv.org/abs/1910.03771
+[P338] [27]  Honnibal, M. and Montani, I. (2017), 'spaCy 2: Natural Language Understanding with Bloom Embeddings, Convolutional Neural Networks and Incremental Parsing'. Available at: https://spacy.io
+[P339] [28]  Smith, R. (2007), 'An Overview of the Tesseract OCR Engine', Proceedings of the 9th International Conference on Document Analysis and Recognition, pp. 629–633. Available at: https://github.com/tesseract-ocr/tesseract
+[P340] [29]  Loshchilov, I. and Hutter, F. (2019), 'Decoupled Weight Decay Regularization', Proceedings of ICLR 2019. Available at: https://arxiv.org/abs/1711.05101
+[P341] [30]  Papineni, K., Roukos, S., Ward, T. and Zhu, W.-J. (2002), 'BLEU: A Method for Automatic Evaluation of Machine Translation', Proceedings of ACL 2002, pp. 311–318. Available at: https://aclanthology.org/P02-1040/
+[P342] [31]  Lin, C.-Y. (2004), 'ROUGE: A Package for Automatic Evaluation of Summaries', Text Summarization Branches Out, pp. 74–81. Available at: https://aclanthology.org/W04-1013/
+[P343] [32]  Abadi, M. et al. (2015), 'TensorFlow: Large-Scale Machine Learning on Heterogeneous Systems'. Available at: https://www.tensorflow.org
+[P344] [33]  Chalkidis, I. et al. (2021), 'LexGLUE: A Benchmark Dataset for Legal Language Understanding in English', arXiv:2110.00976. Available at: https://arxiv.org/abs/2110.00976
+[P345] [34]  LEDGAR Dataset (2020), 'LEDGAR: A Large-Scale Multi-Label Corpus for Text Classification of Legal Provisions in Contracts', LREC 2020. Available at: https://metatext.io/datasets/ledgar
+[P346] [35]  Vuthoo, K., Khetarpaul, S. and Mishra, S. (2026), 'Efficient Clause Identification in Contracts Using NLP and Web-Sourced Data', Proceedings of ICDAM 2025, Springer LNNS vol. 1594. Available at: https://link.springer.com/10.1007/978-3-032-02949-2_44
+[P348] APPENDIX
+[P349] Appendix A Project Proposal
+[P350] The project was approved on the basis of a Final Year Research Project proposal submitted to the Centre for Artificial Intelligence and Machine Learning. The proposal defined the project as an AI-based solution to convert complex legal terms into simpler, more understandable language for ordinary users, helping them understand what legal clauses mean, what obligations they impose, their limitations and the risks involved. It set out seven objectives — dataset collection and preprocessing, clause segmentation, clause classification, entity extraction, simplified interpretation, risky-clause identification and a web interface — a multi-stage pipeline methodology, a free and open-source tool stack, and a seventeen-week timeline. The proposal was submitted by the four-member team and reviewed by the Project Coordinators, Dr. Rangaballav Pradhan and Mr. Gyana Ranjan Patra. The full proposal document is retained separately and accompanies this report.
+[P351] Appendix B Similarity Check Report
+[P352] AUTHOR'S NOTE (flagged per brief): A plagiarism / similarity-check report (for example a Turnitin or DrillBit report) is required in this section by the template but is not present in the supplied project materials. It must be generated by the institution's similarity-check facility and inserted here before final submission.
+[P353] Appendix C Team Contribution
+[P355] Table : Team contribution. Roles are taken from the approved project proposal.
+[P356] Appendix D Course Outcomes, Programme Outcomes and Programme Specific Outcomes
+[P357] Course Outcomes (COs)
+[P358] CO1: Apply engineering knowledge and computing fundamentals to analyse complex real-world problems, identify requirements, and define appropriate project objectives.
+[P359] CO2: Design and develop end-to-end software or computing solutions using appropriate algorithms, architectures and modern tools to meet specified constraints.
+[P360] CO3: Conduct investigations, experimentation and performance evaluation using suitable metrics, datasets, simulations or prototypes to validate project outcomes.
+[P361] CO4: Demonstrate the ability to function effectively as an individual and as a team member or leader, managing tasks, timelines and resources.
+[P362] CO5: Communicate technical ideas, design decisions and results effectively through well-structured project reports, presentations and demonstrations.
+[P363] CO6: Recognise and apply professional ethics, societal impact, sustainability considerations and lifelong-learning principles.
+[P364] Programme Outcomes (POs)
+[P365] PO1 Engineering knowledge; PO2 Problem analysis; PO3 Design/development of solutions; PO4 Conduct investigations of complex problems; PO5 Modern tool usage; PO6 The engineer and society; PO7 Environment and sustainability; PO8 Ethics; PO9 Individual and team work; PO10 Communication; PO11 Project management and finance.
+[P366] Programme Specific Outcomes (PSOs)
+[P367] PSO1: The ability to understand and develop computer programs in areas related to business intelligence, big-data analytics, web design and networking for the efficient design of computer-based systems of varying complexity. PSO2: The ability to apply standard practices and strategy in software project development using open-ended programming environments to deliver a quality product for business success.
+[P368] Appendix E Evidences Linked to CO–PO and PSO Mapping
+[P370] Table : Mapping of Course Outcomes to Programme and Programme Specific Outcomes, with evidence in this report.
+[P371] Appendix F Code Structure
+[P372] The project is an npm workspaces monorepo. Its top-level structure is:
+[P373] ai-legal-intent-rewriter/
+[P374] |-- apps/
+[P375] |   |-- web/                 Next.js 15 web application (TypeScript)
+[P376] |   |   |-- app/             App Router pages and API routes
+[P377] |   |   |-- components/      UI and feature components
+[P378] |   |   |-- lib/             DB models, ML client, validations
+[P379] |   |   +-- types/           Shared TypeScript types
+[P380] |   |-- ml/                  FastAPI ML service (Python 3.11)
+[P381] |   |   |-- app/
+[P382] |   |   |   |-- main.py      FastAPI app and /v1/analyze orchestration
+[P383] |   |   |   |-- config.py    Model pins, thresholds, settings
+[P384] |   |   |   |-- pipeline/    ingest, segment, classify, ner, rewrite, risk
+[P385] |   |   |   |-- schemas/     Pydantic request/response models
+[P386] |   |   |   +-- models/      clause_classifier.pkl (trained artefact)
+[P387] |   |   |-- scripts/         train_classifier.py, cuad_label_map.py
+[P388] |   |   |-- data/            clauses_seed.csv (72 examples)
+[P389] |   |   +-- tests/           pytest suite (34 tests)
+[P390] |-- training/                Jupyter notebooks (Kaggle) for fine-tuning
+[P391] |-- docs/                    architecture.md, api-contract.md, handover
+[P392] +-- data/                    datasets (gitignored except samples)
+[P394] Appendix G Code Listings
+[P395] The following abridged listing shows the core of the three-layer risk-flagging module (app/pipeline/risk.py), which combines keyword, structural and heuristic layers into a single low/medium/high verdict with named triggers:
+[P396] def assess_risk(text, label):
+[P397]     triggers, score = [], 0.0
+[P398]     # Layer 1: keyword triggers (curated red-flag phrases + weights)
+[P399]     for name, (pattern, weight) in _KEYWORD_TRIGGERS.items():
+[P400]         if pattern.search(text):
+[P401]             triggers.append(name)
+[P402]             score += weight
+[P403]     # Layer 2: structural patterns
+[P404]     short_notice, w = _detect_short_notice(text, label)
+[P405]     if short_notice:
+[P406]         triggers.append('short-notice-period')
+[P407]         score += w
+[P408]     one_sided, w = _detect_one_sided_termination(text)
+[P409]     if one_sided:
+[P410]         triggers.append('unilateral-termination')
+[P411]         score += w
+[P412]     # Layer 3: cap and map to a level
+[P413]     score = min(1.0, score)
+[P414]     level = _score_to_level(score)   # >=0.7 high, >=0.4 medium, else low
+[P415]     return Risk(level=level, score=round(score, 3), triggers=triggers)
+[P417] The clause classifier is trained by scripts/train_classifier.py, which builds the following scikit-learn pipeline:
+[P418] Pipeline([
+[P419]     ('tfidf', TfidfVectorizer(ngram_range=(1, 2), min_df=2,
+[P420]                               sublinear_tf=True, strip_accents='unicode',
+[P421]                               max_features=30_000)),
+[P422]     ('clf',   LogisticRegression(max_iter=2000, class_weight='balanced',
+[P423]                                  C=1.0, solver='lbfgs')),
+[P424] ])
+[P426] — End of Report —
+
+=== TABLE 0 ===
+Name of Student | Roll No. | Signature
+Ashreeta Patra | 2241016258 | 
+Shnehal Mishra | 2241013172 | 
+Pratyush Mohanty | 2241013262 | 
+Swagat Sourav Mallick | 2241013083 | 
+
+=== TABLE 1 ===
+Name of Student | Roll No. | Signature
+Ashreeta Patra | 2241016258 | 
+Shnehal Mishra | 2241013172 | 
+Pratyush Mohanty | 2241013262 | 
+Swagat Sourav Mallick | 2241013083 | 
+
+=== TABLE 2 ===
+# | Classification label | Description
+1 | LIABILITY | Limits or allocates legal responsibility for losses.
+2 | TERMINATION | When and how the agreement may be ended.
+3 | PAYMENT | How and when money must be paid.
+4 | CONFIDENTIALITY | Obligations to keep information private.
+5 | INDEMNIFICATION | One party covering another's losses.
+6 | INTELLECTUAL_PROPERTY | Ownership and licensing of IP and creative work.
+7 | GOVERNING_LAW | Which jurisdiction's law applies.
+8 | DISPUTE_RESOLUTION | How disputes are resolved (arbitration, mediation).
+9 | DEFINITIONS | Meaning of specific defined terms.
+10 | RENEWAL | How and whether the agreement renews.
+11 | WARRANTY | Guarantees about a product or service.
+12 | OTHER | Clauses outside the eleven specific categories.
+
+=== TABLE 3 ===
+USER'S BROWSER  —  uploads PDF, pdf.js extracts text client-side
+NEXT.JS 15 WEB APPLICATION (Vercel)  —  UI / dashboard, Auth.js v5 authentication, upload & polling routes, Mongoose ODM, orchestration
+FastAPI ML SERVICE (Hugging Face Spaces)  —  ingestion, clause segmentation, classifier, NER, rewriter, rule-based risk flagging
+MongoDB Atlas  —  users, documents, analyses, clauses        |        Hugging Face Hub  —  pinned / fine-tuned model checkpoints
+
+=== TABLE 4 ===
+1. INGESTION  —  normalise text; (planned) PyMuPDF / Tesseract OCR for PDFs
+2. SEGMENTATION  —  split the document into individual clauses with char-offsets
+3. CLASSIFICATION  —  assign one of 12 categories + top-k alternatives + confidence
+4. NAMED ENTITY RECOGNITION  —  extract DATE, AMOUNT, PARTY, RIGHT, OBLIGATION, CONDITION
+5. INTENT REWRITING  —  generate a plain-language version of the clause
+6. RISK FLAGGING  —  three-layer rules assign low / medium / high with named triggers
+
+=== TABLE 5 ===
+Entity type | Captures
+DATE | Calendar dates and durations (e.g. '30 days', '1 January 2026').
+AMOUNT | Currency values, percentages and spelled-out monetary amounts.
+PARTY | Named contractual roles (Landlord, Tenant, Licensor, etc.).
+RIGHT | Explicit permissions ('right to ...', 'may terminate').
+OBLIGATION | Explicit duties ('shall pay', 'must ...', 'is required to ...').
+CONDITION | Conditional constructions ('in the event of', 'subject to', 'provided that').
+
+=== TABLE 6 ===
+Layer | Technologies
+Web application | Next.js 15 (App Router), TypeScript, Tailwind CSS, shadcn/ui, React
+Authentication | Auth.js v5 (NextAuth, credentials provider, JWT sessions)
+Database | MongoDB Atlas, Mongoose 8 ODM
+ML service | Python 3.11, FastAPI, Uvicorn, Pydantic
+NLP / ML | Hugging Face Transformers 4.46, PyTorch 2.5, spaCy 3.8 (en_core_web_sm), scikit-learn, joblib, NumPy, PyMuPDF 1.24, pytesseract
+Models | freak3123/legal-bert-cuad-v1 (clause classifier — fine-tuned on T4 GPU); freak3123/flan-t5-simplify-v1 (rewriter); TF-IDF + Logistic Regression baseline (kept as runtime fallback)
+Tooling | uv (Python env), npm workspaces, Docker, Git, pytest, Ruff, ESLint
+Target hosting | Vercel (web), Hugging Face Spaces (ML), MongoDB Atlas M0 (database)
+
+=== TABLE 7 ===
+Module | Status | Description
+ingest.py | Implemented | Text-direct ingestion via pdf.js (client-side) and PyMuPDF + pytesseract OCR (server-side) for scanned PDFs.
+segment.py | Implemented | Hybrid regex + spaCy sentenciser; character offsets round-trip.
+classify.py | Implemented | Fine-tuned Legal-BERT (freak3123/legal-bert-cuad-v1) with sklearn pickle + keyword fallback chain.
+ner.py | Implemented | Hybrid: restrictive regex for the six entity types + spaCy en_core_web_sm for DATE/AMOUNT/PARTY recall.
+rewrite.py | Implemented | Fine-tuned FLAN-T5-small (freak3123/flan-t5-simplify-v1) with template fallback if the Hub is unreachable.
+risk.py | Implemented | Full three-layer rule-based risk scoring.
+
+=== TABLE 8 ===
+Label | Examples | Label | Examples
+INTELLECTUAL_PROPERTY | 806 | WARRANTY | 181
+LIABILITY | 806 | CONFIDENTIALITY | 37
+OTHER | 806 | DEFINITIONS | 37
+INDEMNIFICATION | 564 | PAYMENT | 39
+GOVERNING_LAW | 468 | DISPUTE_RESOLUTION | 36
+TERMINATION | 373 | RENEWAL | 36
+
+=== TABLE 9 ===
+Class | Precision | Recall | F1-score | Support
+GOVERNING_LAW | 1.000 | 0.957 | 0.978 | 47
+INDEMNIFICATION | 0.982 | 0.964 | 0.973 | 56
+LIABILITY | 0.987 | 0.938 | 0.962 | 81
+TERMINATION | 0.946 | 0.946 | 0.946 | 37
+INTELLECTUAL_PROPERTY | 0.878 | 0.889 | 0.883 | 81
+OTHER | 0.914 | 0.790 | 0.848 | 81
+WARRANTY | 0.581 | 1.000 | 0.735 | 18
+CONFIDENTIALITY | 1.000 | 1.000 | 1.000 | 4
+DEFINITIONS | 1.000 | 1.000 | 1.000 | 4
+PAYMENT | 0.800 | 1.000 | 0.889 | 4
+RENEWAL | 0.750 | 1.000 | 0.857 | 3
+DISPUTE_RESOLUTION | 0.600 | 1.000 | 0.750 | 3
+Accuracy |  |  | 0.912 | 419
+Macro average | 0.870 | 0.957 | 0.902 | 419
+Weighted average | 0.926 | 0.912 | 0.915 | 419
+
+=== TABLE 10 ===
+Clause | Classification | Key entities | Risk (triggers)
+Term and Termination | TERMINATION (0.99) | RIGHT 'may terminate'; DATE 'seven (7) days' | HIGH (short-notice-period, unilateral-termination)
+Limitation of Liability | LIABILITY (0.96) | — | low
+Payment | PAYMENT (0.86) | OBLIGATION 'shall pay'; DATE 'thirty (30) days' | low (non-refundable)
+Confidentiality | CONFIDENTIALITY (0.43) | OBLIGATION 'shall maintain' | low
+
+=== TABLE 11 ===
+Test module | Tests | Covers
+test_analyze.py | 5 | End-to-end /v1/analyze request handling.
+test_classify.py | 8 | Classifier output shape, labels and fallback.
+test_health.py | 2 | Health / readiness endpoint.
+test_ner.py | 11 | Entity extraction across the six entity types.
+test_segment.py | 8 | Clause segmentation and offset round-tripping.
+Total | 34 | All tests passing.
+
+=== TABLE 12 ===
+Name | Contribution
+Ashreeta Patra (2241016258) — Team Lead | Front-end development of the Next.js web dashboard and back-end integration; orchestration between the web application and the ML service.
+Shnehal Mishra (2241013172) | Clause classification and named-entity extraction; taxonomy design and the CUAD 41→12 label mapping.
+Pratyush Mohanty (2241013262) | Intent-rewriting module and the three-layer rule-based risk-detection system.
+Swagat Sourav Mallick (2241013083) | Dataset collection and curation, and OCR / document-ingestion configuration.
+All members | Literature review, documentation, testing, debugging and presentation.
+
+=== TABLE 13 ===
+CO | Mapped POs / PSOs | Evidence in this report | Section
+CO1 | PO1, PO2, PSO1 | Problem statement, motivation and objectives derived from a real-world legal-comprehension problem. | 1.2, 1.3, 2.2
+CO2 | PO3, PO5, PSO1 | Two-service architecture and the design of each pipeline module using modern tools and frameworks. | 3.2, 3.3, 3.4
+CO3 | PO2, PO4, PSO1, PSO2 | Stratified cross-validation of the classifier, the worked pipeline example and the automated test suite. | 4.4, 4.5
+CO4 | PO8, PO10, PSO2 | Defined team roles and individual contributions across the pipeline. | Appendix C
+CO5 | PO9 | This structured project report and its figures and tables. | Whole report
+CO6 | PO6, PO7, PO11 | Ethical, social and sustainability analysis, and the planned future-work roadmap. | Chapter 5, 6.3
