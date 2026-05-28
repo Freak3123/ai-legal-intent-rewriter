@@ -12,7 +12,6 @@ Usage:
 
 from __future__ import annotations
 
-import csv
 from collections import Counter
 from pathlib import Path
 
@@ -68,8 +67,14 @@ def main() -> int:
     lines.append(f"Held-out test set: **{len(x_test)} clauses** from the CUAD + seed merge ")
     lines.append("(stratified split, seed 42 — same split as the Kaggle training notebook).\n")
     lines.append(f"\n**Classifier:** `{model_versions.classifier}`\n")
-    lines.append(f"\n**Accuracy:** {overall_acc:.3f} · **Macro precision:** {macro['precision']:.3f} · ")
-    lines.append(f"**Macro recall:** {macro['recall']:.3f} · **Macro F1:** {macro['f1-score']:.3f}\n")
+    lines.append(
+        f"\n**Accuracy:** {overall_acc:.3f} · "
+        f"**Macro precision:** {macro['precision']:.3f} · "
+    )
+    lines.append(
+        f"**Macro recall:** {macro['recall']:.3f} · "
+        f"**Macro F1:** {macro['f1-score']:.3f}\n"
+    )
     lines.append("\n## Per-class\n\n")
     lines.append("| Class | Precision | Recall | F1 | Support |\n")
     lines.append("|---|---:|---:|---:|---:|\n")

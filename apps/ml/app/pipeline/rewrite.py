@@ -31,7 +31,9 @@ _LABEL_OPENERS: dict[ClassificationLabel, str] = {
     "TERMINATION": "This clause covers when and how the contract can be ended.",
     "RENEWAL": "This clause sets out how the contract gets renewed.",
     "LIABILITY": "This clause limits what either side can claim if something goes wrong.",
-    "INDEMNIFICATION": "This clause says one side has to cover the other's losses in certain situations.",
+    "INDEMNIFICATION": (
+        "This clause says one side has to cover the other's losses in certain situations."
+    ),
     "CONFIDENTIALITY": "This clause says some information has to be kept private.",
     "PAYMENT": "This clause sets out how and when money has to be paid.",
     "INTELLECTUAL_PROPERTY": "This clause decides who owns the creative or technical work.",

@@ -12,6 +12,7 @@ Layers:
 
 from __future__ import annotations
 
+import contextlib
 import re
 
 from app.config import settings
@@ -76,10 +77,8 @@ def _extract_notice_days(text: str) -> int | None:
     for m in NOTICE_DAYS_RE.finditer(text):
         digit_group = m.group(1)
         if digit_group:
-            try:
+            with contextlib.suppress(ValueError):
                 days.append(int(digit_group))
-            except ValueError:
-                pass
             continue
         # Check for "thirty (30)" style — already caught by digit_group above
         # but also handle bare word numbers

@@ -27,7 +27,10 @@ def test_analyze_returns_clauses(client: TestClient, sample_contract_text: str) 
     assert "rewriter" in body["model_versions"]
 
     # Timing dict has all keys
-    for k in ("ingestion", "segmentation", "classification", "ner", "rewriting", "risk_flagging", "total"):
+    for k in (
+        "ingestion", "segmentation", "classification",
+        "ner", "rewriting", "risk_flagging", "total",
+    ):
         assert k in body["timing_ms"]
 
 
