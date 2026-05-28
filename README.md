@@ -4,9 +4,6 @@ A multi-stage NLP pipeline that ingests legal documents, segments them into clau
 classifies each clause by type, extracts named entities, generates plain-language
 rewrites, and flags potentially risky clauses.
 
-> **BTech CSE (AIML) Final Year Project** — Siksha 'O' Anusandhan University.
-> See [`docs/architecture.md`](./docs/architecture.md) for the full design.
-
 ---
 
 ## Repository layout
@@ -18,7 +15,6 @@ This is an `npm` workspaces monorepo containing two deployable apps:
 | `apps/web/` | User-facing Next.js application | Vercel (free Hobby tier) | Next.js 15 · TypeScript · Tailwind · shadcn/ui · MongoDB · Auth.js v5 |
 | `apps/ml/` | FastAPI ML inference microservice | Hugging Face Spaces (free) | Python 3.11 · FastAPI · Transformers · spaCy · PyMuPDF |
 | `training/` | Jupyter notebooks for model fine-tuning | Run on Kaggle / Colab | PyTorch · Hugging Face |
-| `docs/` | Architecture & API contract | — | Markdown |
 
 ---
 
@@ -113,17 +109,6 @@ uv add transformers
 # Build the ML Docker image (for HF Spaces)
 cd apps/ml && docker build -t legal-rewriter-ml .
 ```
-
----
-
-## Working with Claude Code
-
-This repo ships with three `CLAUDE.md` files (root, `apps/web/`, `apps/ml/`) so that
-every Claude Code session starts with the right context for whichever directory
-you're working in.
-
-Set up MongoDB and Hugging Face MCP servers — they're high-leverage for this
-project. See [`docs/claude-code-setup.md`](./docs/claude-code-setup.md).
 
 ---
 

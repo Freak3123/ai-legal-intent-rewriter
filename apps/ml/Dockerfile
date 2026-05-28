@@ -22,12 +22,16 @@ ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
-# Copy dependency files first for better layer caching
+# Copy dependency files first for better layer caching.
+# README.md is required because pyproject.toml references it for package metadata.
 COPY pyproject.toml ./
 COPY uv.lock* ./
+COPY README.md ./
 
-# Install Python deps into a venv inside the image
-RUN uv sync --frozen --no-dev || uv sync --no-dev
+# Install Python deps into a venv inside the image.
+# --no-install-project skips building the local package — we install only its
+# dependencies here so the `app/` source can change without busting the cache.
+RUN uv sync --frozen --no-dev --no-install-project || uv sync --no-dev --no-install-project
 
 # Download spaCy model used by NER. Cached as a Docker layer so rebuilds are fast.
 RUN uv run python -m spacy download en_core_web_sm
